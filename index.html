@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Website</title>
-</head>    
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #1389ff;
+            background-color: #f8f9fa;
         }
 
         header {
@@ -19,6 +18,7 @@
             padding: 1rem;
             text-align: center;
         }
+
         .container {
             max-width: 1200px;
             margin: 2rem auto;
@@ -70,75 +70,16 @@
         .order-item:last-child {
             border-bottom: none;
         }
-    </style>
 
-<script>
-        // Handle form submission
-        orderForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const productName = document.getElementById('productName').value;
-            const quantity = document.getElementById('quantity').value;
-            const customerName = document.getElementById('customerName').value;
-            const address = document.getElementById('address').value;
-
-            const order = {
-                productName,
-                quantity,
-                customerName,
-                address
-            };
-
-            const ordersRef = ref(database, 'orders');
-            push(ordersRef, order).then(() => {
-                alert('Order submitted successfully!');
-                orderForm.reset();
-            }).catch((error) => {
-                console.error('Error submitting order:', error);
-                alert('Error submitting order.');
-            });
-        });
-
-        // Fetch and render orders in real time
-        const ordersRef = ref(database, 'orders');
-        onValue(ordersRef, (snapshot) => {
-            const orders = snapshot.val();
-            renderOrders(orders);
-        });
-
-        function renderOrders(orders) {
-            ordersContainer.innerHTML = '';
-
-            if (orders) {
-                Object.keys(orders).forEach((key) => {
-                    const order = orders[key];
-                    const orderItem = document.createElement('div');
-                    orderItem.className = 'order-item';
-                    orderItem.innerHTML = `
-                        <strong>Product:</strong> ${order.productName}<br>
-                        <strong>Quantity:</strong> ${order.quantity}<br>
-                        <strong>Customer:</strong> ${order.customerName}<br>
-                        <strong>Address:</strong> ${order.address}<br>
-                        <button onclick="deleteOrder('${key}')">Delete</button>
-                    `;
-                    ordersContainer.appendChild(orderItem);
-                });
-            } else {
-                ordersContainer.innerHTML = '<p>No orders available.</p>';
-            }
+        .order-item button {
+            background-color: #dc3545;
+            margin-top: 0.5rem;
         }
 
-        // Delete an order
-        window.deleteOrder = function (orderId) {
-            const orderRef = ref(database, `orders/${orderId}`);
-            remove(orderRef).then(() => {
-                alert('Order deleted successfully!');
-            }).catch((error) => {
-                console.error('Error deleting order:', error);
-                alert('Error deleting order.');
-            });
-        };
-    </script>
+        .order-item button:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -175,24 +116,78 @@
             <div id="ordersContainer"></div>
         </div>
     </div>
+
+    <script>
+        const orderForm = document.getElementById('orderForm');
+        const ordersContainer = document.getElementById('ordersContainer');
+
+        let orders = [];
+
+        orderForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const productName = document.getElementById('productName').value;
+            const quantity = document.getElementById('quantity').value;
+            const customerName = document.getElementById('customerName').value;
+            const address = document.getElementById('address').value;
+
+            const order = {
+                productName,
+                quantity,
+                customerName,
+                address
+            };
+
+            orders.push(order);
+            renderOrders();
+
+            orderForm.reset();
+        });
+
+        function renderOrders() {
+            ordersContainer.innerHTML = '';
+
+            orders.forEach((order, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <strong>Product:</strong> ${order.productName}<br>
+                    <strong>Quantity:</strong> ${order.quantity}<br>
+                    <strong>Customer:</strong> ${order.customerName}<br>
+                    <strong>Address:</strong> ${order.address}<br>
+                    <button onclick="deleteOrder(${index})">Delete</button>
+                `;
+                ordersContainer.appendChild(orderItem);
+            });
+        }
+
+        function deleteOrder(index) {
+            orders.splice(index, 1);
+            renderOrders();
+        }
+    </script>
 </body>
-<script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyB6pmCfishJXS2uZVRGp5qYag4xRTbiMWs",
-      authDomain: "dangels-order-website-ph-b97b1.firebaseapp.com",
-      projectId: "dangels-order-website-ph-b97b1",
-      storageBucket: "dangels-order-website-ph-b97b1.firebasestorage.app",
-      messagingSenderId: "317722879396",
-      appId: "1:317722879396:web:bc066f8b584f7537e20d31"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-  </script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJpck0n1rCAmveSssroISTQP_cOLCNTBw",
+    authDomain: "dangels-website-ph-5eff7.firebaseapp.com",
+    projectId: "dangels-website-ph-5eff7",
+    storageBucket: "dangels-website-ph-5eff7.firebasestorage.app",
+    messagingSenderId: "986699780969",
+    appId: "1:986699780969:web:2565604f972db644d023f8",
+    measurementId: "G-EHQ7ZBLHDR"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </html>
